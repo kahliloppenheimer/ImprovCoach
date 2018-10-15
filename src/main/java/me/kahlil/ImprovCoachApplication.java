@@ -3,6 +3,8 @@ package me.kahlil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import me.kahlil.health.SayingHealthCheck;
+import me.kahlil.resources.SayingResource;
 
 public class ImprovCoachApplication extends Application<ImprovCoachConfiguration> {
 
@@ -17,13 +19,20 @@ public class ImprovCoachApplication extends Application<ImprovCoachConfiguration
 
     @Override
     public void initialize(final Bootstrap<ImprovCoachConfiguration> bootstrap) {
-        // TODO: application initialization
+        // nothing to do yet
     }
 
     @Override
     public void run(final ImprovCoachConfiguration configuration,
                     final Environment environment) {
-        // TODO: implement application
+        SayingResource resource = new SayingResource(
+                configuration.getTemplate(),
+                configuration.getDefaultName());
+
+        SayingHealthCheck sayingHealthCheck = new SayingHealthCheck(configuration.getTemplate());
+
+        environment.jersey().register(resource);
+        environment.healthChecks().register("saying", sayingHealthCheck);
     }
 
 }
